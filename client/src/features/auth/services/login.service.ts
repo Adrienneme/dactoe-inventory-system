@@ -3,14 +3,26 @@ import { type Login } from "@/features/auth/schemas/user"
 
 
 export const loginUser = async (data: Login) => {
-  const { data: response, error } = await supabase.auth.signInWithPassword({
+  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
     email: data.email,
     password: data.password,
   });
 
-  if (error) {
-    throw new Error(error.message)
+  if (authError) throw new Error(authError.message)
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('username')
+    .eq('id', authData.user.id)
+    .single();
+
+  if (profileError) {
+    console.warn("Profile not found, defaulting to email prefix");
+    return { 
+      id: authData.user.id, 
+      username: authData.user.email?.split('@')[0] || "User" 
+    };
   }
 
-  return response
+  return { id: authData.user.id, email: authData.user.email, username: profile.username };
 }
