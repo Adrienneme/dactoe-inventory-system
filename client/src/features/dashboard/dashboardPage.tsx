@@ -3,7 +3,7 @@ import Navbar from "@/components/layout/navbar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis } from "recharts"
+import { LineChart, Line, ResponsiveContainer, Tooltip } from "recharts"
 import { TrendingUp, ShoppingCart, Box, UserPlus } from "lucide-react"
 
 // --- MOCK DATABASE RESPONSE ---
