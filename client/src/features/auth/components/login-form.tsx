@@ -16,13 +16,23 @@ import { Input } from "@/components/ui/input"
 
 import { ShieldUser } from 'lucide-react';
 
+import { useLogin } from "../hook/use-login-form"
+
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
+  const { form, isPending, onSubmit } = useLogin()
+
+  const {
+    register,
+    formState: { errors },
+  } = form;
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <form>
+      <form onSubmit={onSubmit}>
         <FieldGroup>
           <div className="flex flex-col items-center gap-2 text-center">
             <img
@@ -35,13 +45,17 @@ export function LoginForm({
 
           </div>
           <Field>
-            <FieldLabel htmlFor="email">Username</FieldLabel>
+            <FieldLabel htmlFor="email">Email</FieldLabel>
             <Input
-              id="username"
-              type="username"
-              placeholder="KC1234"
-              required
+              id="email"
+              type="email"
+              placeholder="m@gmail.com"
+              {...register("email")}
             />
+            {errors.email && (
+              <p className="text-destructive text-xs">{errors.email.message}</p>
+            )}
+
           </Field>
           <Field>
             <FieldLabel htmlFor="Password">Password</FieldLabel>
@@ -49,11 +63,16 @@ export function LoginForm({
               id="password"
               type="password"
               placeholder="••••••••"
-              required
+              {...register("password")}
             />
+            {errors.password && (
+              <p className="text-destructive text-xs">{errors.password.message}</p>
+            )}
           </Field>
           <Field>
-            <Button type="submit">LOG IN</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "LOGGING IN..." : "LOG IN"}
+            </Button>
           </Field>
           <FieldSeparator className="mt-6">System Assistance</FieldSeparator>
           <div className="flex justify-center">

@@ -6,6 +6,12 @@ export const UserSchema = z.object({
 })
 
 
+export const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(1, "Password is required"), 
+});
+
+
 export const registerSchema = UserSchema.extend({
   password: z.string().min(8, "Password must be at least 8 characters long"),
   confirmPassword: z.string().min(8, "Please confirm your password"),
@@ -18,4 +24,5 @@ export const registerSchema = UserSchema.extend({
 
 
 export type User = z.infer<typeof UserSchema>
+export type Login = z.infer<typeof loginSchema>
 export type Register = z.infer<typeof registerSchema>
