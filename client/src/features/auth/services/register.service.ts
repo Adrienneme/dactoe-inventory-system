@@ -18,6 +18,9 @@ export const registerUser = async (data: Register) => {
   const { data: response, error: authError } = await supabase.auth.signUp({
     email: data.email,
     password: data.password,
+    options: {
+      emailRedirectTo: 'https://dactoe-inventory-system.vercel.app/login'
+    }
   });
 
   if (authError) throw authError;
