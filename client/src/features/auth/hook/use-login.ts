@@ -22,7 +22,13 @@ export const useLoginMutation = (setError: UseFormSetError<Login>) => {
     },
 
     onError: (error: any) => {
-      if (error.message.includes("credentials")) {
+      console.error("Login error:", error);
+      const isInvalidAuth =
+        error.status === 400 ||
+        error.message?.toLowerCase().includes("credentials") ||
+        error.message?.includes("400");
+
+      if (isInvalidAuth) {
         setError("root", { message: "Invalid email or password." });
       } else {
         setError("root", { message: "Something went wrong. Please try again." });

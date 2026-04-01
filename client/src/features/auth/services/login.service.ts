@@ -5,10 +5,7 @@ import { type Login } from "@/features/auth/schemas/user"
 export const loginUser = async (data: Login) => {
   const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
     email: data.email,
-    password: data.password,
-    options: {
-    emailRedirectTo: 'https://dactoe-inventory-system.vercel.app/login',
-  },
+    password: data.password
   });
 
   if (authError) throw new Error(authError.message)

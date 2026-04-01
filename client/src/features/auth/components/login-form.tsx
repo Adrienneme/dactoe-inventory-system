@@ -69,6 +69,11 @@ export function LoginForm({
               <p className="text-destructive text-xs">{errors.password.message}</p>
             )}
           </Field>
+
+          {errors.root && (
+            <p className="text-destructive text-xs">{errors.root.message}</p>
+          )}
+
           <Field>
             <Button type="submit" disabled={isPending}>
               {isPending ? "LOGGING IN..." : "LOG IN"}

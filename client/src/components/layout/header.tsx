@@ -3,11 +3,25 @@ import { Link, useNavigate } from "@tanstack/react-router"
 import { User, SquareActivity, LogOut, ChevronDown } from "lucide-react"
 import logo from "@/assets/logo.png"
 import { useUserStore } from "@/store/useUserStore"
+import supabase from "@/lib/supabase" 
 
 const Header = () => {
   const navigate = useNavigate()
   const { username, email, clearAuth } = useUserStore()
   const [isOpen, setIsOpen] = useState(false)
+
+  const handleLogout = async () => {
+  try {
+    await supabase.auth.signOut()
+    clearAuth()
+    setIsOpen(false)
+    navigate({ to: "/login" })
+  } catch (error) {
+    console.error("Error during logout:", error)
+    clearAuth()
+    navigate({ to: "/login" })
+  }
+}
 
   return (
     <header className="fixed top-0 z-50 flex h-20 w-full items-center justify-between border-b border-gray-700 bg-gray-900 px-6 text-white">
@@ -61,11 +75,7 @@ const Header = () => {
                 </div>
 
                 <button type="button"
-                  onClick={() => {
-                    clearAuth()
-                    setIsOpen(false)
-                    navigate({ to: "/login" })
-                  }}
+                  onClick={() => {handleLogout()}}
                   className="flex w-full items-center gap-2 rounded px-3 py-2 text-sm text-red-400 hover:bg-red-900/20 transition-colors"
                 >
                   <LogOut size={16} />
