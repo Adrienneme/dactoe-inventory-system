@@ -1,44 +1,24 @@
+// src/pages/Dashboard.tsx
 import Header from "@/components/layout/header"
 import Navbar from "@/components/layout/navbar"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { LineChart, Line, ResponsiveContainer, Tooltip } from "recharts"
-import { TrendingUp, ShoppingCart, Box, UserPlus } from "lucide-react"
+import { TrendingUp } from "lucide-react"
 
-// --- MOCK DATABASE RESPONSE ---
-const MOCK_DB = {
-  revenue: 42500.00,
-  unitsSold: 1284,
-  growth: 12.5,
-  chartData: [
-    { name: "MON", val: 400 }, { name: "TUE", val: 300 }, { name: "WED", val: 500 },
-    { name: "THU", val: 280 }, { name: "FRI", val: 590 }, { name: "SAT", val: 320 }, 
-    { name: "SUN", val: 480 }, 
-  ],
-  lowStock: [
-    { id: 1, name: "Air Jordan 1 Retro", status: "Only 2 left in stock", type: "critical" },
-    { id: 2, name: "Ultraboost Light", status: "5 items remaining", type: "warning" }
-  ],
-  activities: [
-    { id: 101, type: "order", title: "New Order #8821", detail: "2 mins ago • $180.00", icon: ShoppingCart, color: "text-orange-500 bg-orange-50" },
-    { id: 102, type: "stock", title: "Stock Restocked", detail: "45 mins ago • Nike Dunk Low (50 units)", icon: Box, color: "text-blue-500 bg-blue-50" },
-    { id: 103, type: "user", title: "New Wholesale Account", detail: "3 hours ago • Urban Footwear Co.", icon: UserPlus, color: "text-purple-500 bg-purple-50" }
-  ],
-  topProducts: [
-    { name: "Nike Air Max", sold: 124, revenue: 18600 },
-    { name: "Yeezy Boost 350", sold: 98, revenue: 21560 },
-    { name: "New Balance 550", sold: 82, revenue: 10250 }
-  ]
-};
+// Import the mock data
+import { MOCK_DASHBOARD_DATA } from "@/features/dashboard/data/dashboard-data"
 
 export const dashboardPage = () => {
+
+  const data = MOCK_DASHBOARD_DATA;
+
   return (
-    // Fixed: w-full and removal of items-center to fix the "white space on left" issue
     <div className="min-h-screen w-full bg-[#FDF8F6] pt-20 pb-24">
       <Header />
       
-      <main className="w-full px-4 sm:px-10 max-w-400 mx-auto space-y-8 mt-10">
+      <main className="w-full px-4 sm:px-10 max-w-[1400px] mx-auto space-y-8 mt-10">
         {/* Header Section */}
         <div className="flex flex-col gap-1">
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Dashboard Overview</h1>
@@ -52,20 +32,20 @@ export const dashboardPage = () => {
               <div className="flex gap-10">
                 <div>
                   <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Total Revenue</p>
-                  <h2 className="text-3xl font-extrabold">${MOCK_DB.revenue.toLocaleString()}</h2>
+                  <h2 className="text-3xl font-extrabold">${data.revenue.toLocaleString()}</h2>
                 </div>
                 <div>
                   <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Units Sold</p>
-                  <h2 className="text-3xl font-extrabold">{MOCK_DB.unitsSold.toLocaleString()}</h2>
+                  <h2 className="text-3xl font-extrabold">{data.unitsSold.toLocaleString()}</h2>
                 </div>
               </div>
               <Badge className="bg-green-100 text-green-600 border-none px-3 py-1.5 font-bold rounded-full">
-                <TrendingUp size={14} className="mr-1" /> {MOCK_DB.growth}%
+                <TrendingUp size={14} className="mr-1" /> {data.growth}%
               </Badge>
             </CardHeader>
             <CardContent className="h-75">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={MOCK_DB.chartData}>
+                <LineChart data={data.chartData}>
                   <Tooltip 
                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }} 
                   />
@@ -73,7 +53,7 @@ export const dashboardPage = () => {
                 </LineChart>
               </ResponsiveContainer>
               <div className="flex justify-between px-2 text-[10px] font-bold text-gray-500 tracking-tighter">
-                {MOCK_DB.chartData.map(d => <span key={d.name}>{d.name}</span>)}
+                {data.chartData.map(d => <span key={d.name}>{d.name}</span>)}
               </div>
             </CardContent>
           </Card>
@@ -81,7 +61,7 @@ export const dashboardPage = () => {
           <Card className="border-none shadow-sm rounded-3xl bg-white">
             <CardHeader><CardTitle className="text-xl font-bold">Low Stock Alerts</CardTitle></CardHeader>
             <CardContent className="space-y-4">
-              {MOCK_DB.lowStock.map((item) => (
+              {data.lowStock.map((item) => (
                 <div key={item.id} className={`p-4 rounded-2xl flex items-center gap-4 ${item.type === 'critical' ? 'bg-red-50 text-red-600' : 'bg-orange-50 text-orange-600'}`}>
                   <div className="h-12 w-12 bg-gray-900 rounded-xl shrink-0 shadow-inner" />
                   <div>
@@ -105,7 +85,7 @@ export const dashboardPage = () => {
               <Badge variant="outline" className="text-orange-500 border-orange-200 font-bold px-3">LIVE</Badge>
             </CardHeader>
             <CardContent className="space-y-6">
-              {MOCK_DB.activities.map((act) => (
+              {data.activities.map((act) => (
                 <div key={act.id} className="flex gap-4 items-center">
                   <div className={`h-11 w-11 shrink-0 rounded-full flex items-center justify-center ${act.color}`}>
                     <act.icon size={20} />
@@ -130,7 +110,7 @@ export const dashboardPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {MOCK_DB.topProducts.map((shoe) => (
+                {data.topProducts.map((shoe) => (
                   <TableRow key={shoe.name} className="border-none hover:bg-gray-50/50">
                     <TableCell className="font-bold flex items-center gap-3 pl-5">
                       <div className="h-10 w-10 bg-gray-100 rounded-lg shrink-0" /> {shoe.name}
