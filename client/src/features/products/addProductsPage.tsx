@@ -12,11 +12,13 @@ import { SizeCard } from "./components/sizeCard";
 import Header from "@/components/layout/header";
 import Navbar from "@/components/layout/navbar";
 
+import { Link } from "@tanstack/react-router";
+
 export default function AddProductPage() {
   const [categoryType, setCategoryType] = useState("adults");
 
   const ADULT_SIZES = ["36", "37", "38", "39", "40", "41", "42", "43", "44", "45"];
-  const KID_SIZES = ["22", "23", "24", "25", "26", "27", "28", "29", "30"];
+  const KID_SIZES = ["22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35"];
 
   return (
     <div className="min-h-screen w-full bg-[#FDF8F6] pt-20 pb-24">
@@ -117,9 +119,6 @@ export default function AddProductPage() {
                     <SizeCard
                       key={size}
                       size={`EU ${size}`}
-                      isAssigned={size === "39" || size === "42"}
-                      defaultQty={size === "39" ? 12 : size === "42" ? 8 : undefined}
-                      defaultArea={size === "39" ? "Area 2" : size === "42" ? "Area 1" : undefined}
                     />
                   ))}
                 </div>
@@ -140,13 +139,15 @@ export default function AddProductPage() {
 
             <InventoryMap />
 
-            <div className="flex flex-col gap-3 pt-2">
+            <div className="flex flex-col gap-3 pt-2 ">
               <Button size="lg" className="h-14 bg-red-500 hover:bg-red-600 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-red-100">
                 Save Product
               </Button>
-              <Button variant="ghost" className="h-10 text-gray-400 font-bold uppercase text-[10px] tracking-widest">
-                Cancel
-              </Button>
+              <Link to="/products">
+                <Button variant="ghost" className="h-10 text-gray-400 font-bold uppercase text-[10px] tracking-widest">
+                  Cancel
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

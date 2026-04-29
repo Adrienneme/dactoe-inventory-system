@@ -87,7 +87,9 @@ export const productsPage = () => {
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right px-2 sm:px-4">
-                                            <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-50 font-bold h-8 px-2 sm:px-4">View</Button>
+                                            <Link to="/products/$productId" params={{ productId: product.id }}>
+                                                <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-50 font-bold h-8 px-2 sm:px-4">View</Button>
+                                            </Link>
                                         </TableCell>
                                     </TableRow>
                                 ))}
