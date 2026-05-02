@@ -18,7 +18,7 @@ export const dashboardPage = () => {
     <div className="min-h-screen w-full bg-[#FDF8F6] pt-20 pb-24">
       <Header />
       
-      <main className="w-full px-4 sm:px-10 max-w-[1400px] mx-auto space-y-8 mt-10">
+      <main className="w-full px-4 sm:px-10 max-w-350 mx-auto space-y-8 mt-10">
         {/* Header Section */}
         <div className="flex flex-col gap-1">
           <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Dashboard Overview</h1>
