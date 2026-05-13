@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Info, Plus, LayoutGrid, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,44 +21,59 @@ import Navbar from "@/components/layout/navbar";
 import { Link } from "@tanstack/react-router";
 import { LocationPicker } from "@/features/products/components/locationPicker.tsx";
 
+const ADULT_SIZES = [
+  "36",
+  "37",
+  "38",
+  "39",
+  "40",
+  "41",
+  "42",
+  "43",
+  "44",
+  "45",
+];
+const KID_SIZES = [
+  "22",
+  "23",
+  "24",
+  "25",
+  "26",
+  "27",
+  "28",
+  "29",
+  "30",
+  "31",
+  "32",
+  "33",
+  "34",
+  "35",
+];
+
+type SizeType = "adults" | "kids";
+
+type VariantDraft = {
+  size_eu: number;
+  stock_quantity: number;
+  location: string;
+};
+
 // --- Main Page Component ---
 export default function AddProductPage() {
-  const [sizeType, setSizeType] = useState("adults"); // To toggle between Adult/Kid size lists
+  const [sizeType, setSizeType] = useState<SizeType>("adults");
   const { addProduct, isAdding } = useAddProduct();
-
-  const ADULT_SIZES = [
-    "36",
-    "37",
-    "38",
-    "39",
-    "40",
-    "41",
-    "42",
-    "43",
-    "44",
-    "45",
-  ];
-  const KID_SIZES = [
-    "22",
-    "23",
-    "24",
-    "25",
-    "26",
-    "27",
-    "28",
-    "29",
-    "30",
-    "31",
-    "32",
-    "33",
-    "34",
-    "35",
-  ];
+  const variantCacheRef = useRef<
+    Record<SizeType, Record<number, VariantDraft>>
+  >({
+    adults: {},
+    kids: {},
+  });
 
   const {
     register,
     handleSubmit,
     control,
+    getValues,
     watch,
     formState: { errors },
   } = useForm({
@@ -81,15 +96,32 @@ export default function AddProductPage() {
     name: "variants",
   });
 
-  // Re-generate the variants array whenever the user toggles Adults vs Kids
+  const handleSizeTypeChange = (nextSizeType: SizeType) => {
+    const currentVariants = getValues("variants") as VariantDraft[];
+    variantCacheRef.current[sizeType] = currentVariants.reduce<
+      Record<number, VariantDraft>
+    >((acc, variant) => {
+      acc[variant.size_eu] = variant;
+      return acc;
+    }, {});
+
+    setSizeType(nextSizeType);
+  };
+
   useEffect(() => {
     const sizes = sizeType === "adults" ? ADULT_SIZES : KID_SIZES;
+    const cachedVariants = variantCacheRef.current[sizeType];
     replace(
-      sizes.map((size) => ({
-        size_eu: parseInt(size),
-        stock_quantity: 0,
-        location: "F1:A1:L1",
-      })),
+      sizes.map((size) => {
+        const sizeEu = parseInt(size);
+        return (
+          cachedVariants[sizeEu] ?? {
+            size_eu: sizeEu,
+            stock_quantity: 0,
+            location: "F1:A1:L1",
+          }
+        );
+      }),
     );
   }, [sizeType, replace]);
 
@@ -128,6 +160,22 @@ export default function AddProductPage() {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Mobile Image Upload */}
+          <div className="xl:hidden">
+            <Card className="border-none shadow-sm rounded-[32px] bg-white overflow-hidden">
+              <CardContent className="p-6">
+                <div className="h-48 rounded-2xl border-2 border-dashed border-gray-100 bg-slate-50/50 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 transition-all">
+                  <div className="p-2 bg-white rounded-full shadow-sm mb-2">
+                    <Plus className="w-4 h-4 text-gray-300" />
+                  </div>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase">
+                    Upload Image
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           <div className="xl:col-span-2 space-y-6">
             {/* 1. Product Information */}
             <Card className="border-none shadow-sm rounded-[32px] bg-white overflow-hidden">
@@ -257,8 +305,8 @@ export default function AddProductPage() {
                           <SelectValue placeholder="Select Category" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="top-grade">Top Grade</SelectItem>
-                          <SelectItem value="oem">OEM</SelectItem>
+                          <SelectItem value="Top Grade">Top Grade</SelectItem>
+                          <SelectItem value="OEM">OEM</SelectItem>
                           <SelectItem value="2-999">2-999</SelectItem>
                           <SelectItem value="2-1199">2-1199</SelectItem>
                           <SelectItem value="2-1499">2-1499</SelectItem>
@@ -279,7 +327,7 @@ export default function AddProductPage() {
                     Stock Assignment
                   </span>
                 </div>
-                <Select value={sizeType} onValueChange={setSizeType}>
+                <Select value={sizeType} onValueChange={handleSizeTypeChange}>
                   <SelectTrigger className="w-32 h-8 rounded-full text-[10px] font-black uppercase bg-white border-gray-200">
                     <SelectValue />
                   </SelectTrigger>
@@ -316,6 +364,7 @@ export default function AddProductPage() {
                         </Label>
                         <Input
                           type="number"
+                          min={0}
                           {...register(
                             `variants.${index}.stock_quantity` as const,
                             { valueAsNumber: true },
@@ -349,7 +398,7 @@ export default function AddProductPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <Card className="border-none shadow-sm rounded-[32px] bg-white overflow-hidden">
+            <Card className="hidden xl:block border-none shadow-sm rounded-[32px] bg-white overflow-hidden">
               <CardContent className="p-6">
                 <div className="h-36 rounded-2xl border-2 border-dashed border-gray-100 bg-slate-50/50 flex flex-col items-center justify-center cursor-pointer hover:bg-slate-50 transition-all">
                   <div className="p-2 bg-white rounded-full shadow-sm mb-2">
@@ -378,14 +427,13 @@ export default function AddProductPage() {
                 )}
                 {isAdding ? "Adding Product..." : "Save Product"}
               </Button>
-              <Link to="/products" className="w-full">
-                <Button
-                  variant="ghost"
-                  className="w-full h-14 border-2 border-red-100 text-red-500 hover:bg-red-50 rounded-2xl font-black uppercase tracking-widest"
-                >
-                  Cancel
-                </Button>
-              </Link>
+              <Button
+                asChild
+                variant="ghost"
+                className="w-full h-14 border-2 border-red-100 text-red-500 hover:bg-red-50 rounded-2xl font-black uppercase tracking-widest"
+              >
+                <Link to="/products">Cancel</Link>
+              </Button>
             </div>
           </div>
         </div>

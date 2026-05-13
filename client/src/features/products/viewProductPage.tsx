@@ -185,6 +185,27 @@ export default function ViewProductPage() {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Mobile Image Display */}
+          <div className="xl:hidden">
+            <Card className="border-none shadow-sm rounded-[32px] bg-white overflow-hidden">
+              <CardContent className="p-6">
+                <div className="aspect-video sm:aspect-square rounded-2xl bg-slate-50 flex items-center justify-center border border-gray-100 overflow-hidden">
+                  {product.image_url ? (
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-[10px] font-bold text-gray-300 uppercase italic">
+                      No Product Image
+                    </span>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           <div className="xl:col-span-2 space-y-6">
             {/* 1. Product Information Card */}
             <Card className="border-none shadow-sm rounded-[32px] bg-white overflow-hidden">
@@ -358,7 +379,7 @@ export default function ViewProductPage() {
           </div>
 
           <div className="space-y-6">
-            <Card className="border-none shadow-sm rounded-[32px] bg-white overflow-hidden">
+            <Card className="hidden xl:block border-none shadow-sm rounded-[32px] bg-white overflow-hidden">
               <CardContent className="p-6">
                 <div className="aspect-square rounded-2xl bg-slate-50 flex items-center justify-center border border-gray-100 overflow-hidden">
                   {product.image_url ? (
